@@ -1,0 +1,11 @@
+{
+  "name": "battery-utils",
+  "version": "0.0.1",
+  "main": "index.js",
+  "author": "Kilian McMahon",
+  "license": "MIT",
+  "private": false,
+  "devDependencies": {
+    "node-dir": "^0.1.17"
+  }
+}
