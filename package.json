@@ -22,6 +22,6 @@
     "watch": "webpack --watch --config ./webpack.config.js"
   },
   "bin": {
-    "batt": "./dist/cli.js"
+    "battery": "./dist/cli.js"
   }
 }
