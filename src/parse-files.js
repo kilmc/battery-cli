@@ -1,5 +1,6 @@
-const fs = require('fs');
-const path = require('path');
+import fs from 'fs';
+import path from 'path'
+import { getPaths } from './utils';
 
 const extractClassNames = (str,regexArr) => {
   const stringMatch = '[\'\"](.*?)[\'\"]';
@@ -23,32 +24,33 @@ const extractClassNames = (str,regexArr) => {
     .reduce((xs,x) => xs.concat(x),[]);
 }
 
-const walkSync = (dir) =>
-  fs.lstatSync(dir).isDirectory()
-    ? fs
-      .readdirSync(dir)
-      .map(f => walkSync(path.join(dir, f)))
-      .reduce((xs,x) => xs.concat(x),[])
-    : dir;
-
-const getPaths = (dir, filterFn = x => x) => {
-  return walkSync(dir).filter(filterFn)
-}
-
 const classNameParser = ({
   regexArr,
-  targetDir,
   fileFilterFn
-}) => {
-  const files = getPaths(targetDir,fileFilterFn);
-
+}) => (targetDir) => {
+  const files = getPaths(path.resolve(targetDir),fileFilterFn);
   const extractedClassNames = files.map(file => {
-    const contents = fs.readFileSync(file, "utf8");
-    return extractClassNames(contents,regexArr)
+    return extractClassNames(
+      fs.readFileSync(file, "utf8"),
+      regexArr
+    )
   })
   .reduce((xs,x) => xs.concat(x),[]);
 
   return [...new Set(extractedClassNames)];
 };
 
-module.exports.classNameParser = classNameParser;
+export const parseHTML = classNameParser({
+  regexArr: [
+    'class=[\"\'](.*?)[\"\']'
+  ],
+  fileFilterFn: f => f.match(/\.html/)
+});
+
+export const parseJS = classNameParser({
+  regexArr: [
+    'styles\\((.*?)\\)',
+    'className=[\"\'](.*?)[\"\']'
+  ],
+  fileFilterFn: f => f.match(/\.js/)
+});
