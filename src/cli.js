@@ -3,7 +3,7 @@
 import program from 'commander';
 import path from 'path';
 import fs from 'fs';
-import { generateCSS } from 'battery';
+import { generateCSS } from '@battery/core';
 import { parseJS, parseHTML } from './parse-files';
 
 const writeCssFile = (styles,outDir) => {
