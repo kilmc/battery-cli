@@ -4,7 +4,6 @@
   "main": "dist/index.js",
   "author": "Kilian McMahon",
   "license": "MIT",
-  "private": true,
   "devDependencies": {
     "@battery/core": "^0.0.2",
     "babel-cli": "^6.26.0",
