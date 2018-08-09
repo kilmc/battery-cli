@@ -2,10 +2,19 @@ import fs from 'fs';
 import path from 'path'
 import { getPaths } from './utils';
 
+const flatten = (items) => items
+  .reduce((flat,item) => {
+    Array.isArray(item)
+      ? flat.push(...flatten(item))
+      : flat.push(item)
+    return flat
+  },[]);
+
+
 const extractClassNames = (str,regexArr) => {
   const stringMatch = '[\'\"](.*?)[\'\"]';
 
-  return regexArr
+  return flatten(regexArr
     .map(regex => {
       const matches = str.match(new RegExp(regex,'g'))
       if (!matches) return [];
@@ -15,14 +24,14 @@ const extractClassNames = (str,regexArr) => {
         .reduce((xs,x) => {
           const dirty = x.match(new RegExp(stringMatch,'g'));
           dirty
-            ? xs.push(dirty.map(y => y.match(new RegExp(stringMatch))[1]))
+            ? xs.push(dirty.map(y => y
+              .match(new RegExp(stringMatch))[1]
+              .split(' ')))
             : xs.push(x.split(' '))
           return xs;
         },[])
-        .reduce((xs,x) => xs.concat(x),[])
-    })
-    .reduce((xs,x) => xs.concat(x),[]);
-}
+    }));
+};
 
 const classNameParser = ({
   regexArr,
@@ -49,7 +58,7 @@ export const parseHTML = classNameParser({
 
 export const parseJS = classNameParser({
   regexArr: [
-    'styles\\((.*?)\\)',
+    'styles\\(([^)]+)',
     'className=[\"\'](.*?)[\"\']'
   ],
   fileFilterFn: f => f.match(/\.js/)
