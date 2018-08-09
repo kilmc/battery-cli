@@ -11,20 +11,21 @@ const writeCssFile = (styles, outDir) => {
 }
 
 program
-  .version('0.1.0')
-  .option('-o --out-dir <dir>','Output directory for the final CSS file');
+  .version('0.0.2');
 
 program
   .command('generate [config]')
   .option('-s --static','Parse static HTML files')
   .option('-d --dir <dir>','Target directory to parse for class names')
+  .option('-w --watch','Watch the target directory for changes')
+  .option('-o --out-dir <dir>','Output directory for the final CSS file')
   .action((config, options) => {
     if (!path.resolve('./battery.config.js') && !options.config) {
       console.log('no default config found at ./battery.config.js');
       console.log('Options');
       console.log('    - Add the default config file');
       console.log('    - Pass the path to the config via the -c and --config flag');
-      return false;
+      process.exit(1);
     }
     const configPath = path.resolve(config ? config : './battery.config.js')
     const importedConfig = __non_webpack_require__(configPath).default;
