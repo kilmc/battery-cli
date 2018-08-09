@@ -35,11 +35,21 @@ program
 
     // Output directory for .css file
     const outDir = path.resolve(options.outDir ? options.outDir : 'styles');
-
-
     const parseFn = options.static ? parseHTML : parseJS;
-    const css = generateCSS(parseFn(targetDir),importedConfig)
-    writeCssFile(css,outDir);
+
+    const parseAndWrite = () => {
+      const css = generateCSS(parseFn(targetDir),importedConfig)
+      writeCssFile(css,outDir);
+    };
+
+    if (options.watch) {
+      console.log('WATCHING')
+      fs.watch(targetDir,{ recursive: true }, () => {
+        parseAndWrite();
+      })
+    } else {
+      parseAndWrite();
+    }
   });
 
 
